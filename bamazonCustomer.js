@@ -22,7 +22,7 @@ const menu = function() {
     {
       message: "Menu",
       type: "list",
-      choices: ["Show Products", "Purchase", "Exit"],
+      choices: ["Purchase", "Show Products", "Exit"],
       name: "choice"
     }
   ]).then ( res => {
@@ -85,13 +85,23 @@ const purchaseItem = function() {
       if (err) throw err;
       const newQty = product[0].stock_quantity - res.qty;
       if (newQty < 0) {
-        console.log('Insufficent quantity!')
+        console.log('\nInsufficent quantity!\n')
         showProducts();
+      } else {
+        connection.query(`UPDATE products SET stock_quantity = ? WHERE item_id = ?`, [newQty, choiceID], (err, updated) => {
+          if (err) throw err;
+          printReceipt(product[0].product_name, product[0].price, res.qty);
+          showProducts();
+        })
       };
-      connection.query(`UPDATE products SET stock_quantity = ? WHERE item_id = ?`, [newQty, choiceID], (err, res) => {
-        if (err) throw err;
-        showProducts();
-      })
     })
   })
 };
+
+const printReceipt = (item, itemPrice, qtyPurchased) => {
+  console.log('\n-------R E C E I P T-------');
+  console.log(`${item} x ${qtyPurchased} @ $${itemPrice}`);
+  console.log(`=`)
+  console.log(`GRAND TOTAL: $${itemPrice * qtyPurchased}`)
+  console.log('----T H A N K | Y O U !----\n');
+}
