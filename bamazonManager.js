@@ -123,6 +123,44 @@ const addInv = () => {
 };
 
 const addProduct = () => {
-  console.log("Add Products Here!")
-  menu();
+  console.log('\n------------- NEW PRODUCT MANAGER -------------\n')
+  inquirer.prompt([
+    {
+      message: "What do you want to call the product you wish to add?",
+      name: "name"
+    },
+    {
+      message: "What category would like to classify this product as?",
+      type: "list",
+      choices: ["Apparel", "Bathroom", "Bedroom", "Dining", "Electronics", "Office Supplies", "Sports", "Other"],
+      name: "category"
+    },
+    {
+      message: "What price would you like to set for this product?",
+      name: "price",
+      validate: function(value) {
+        if (!isNaN(value)){
+          return true;
+        }
+        return false;
+      }
+    },
+    {
+      message: "What is your starting inventory/stock of this product?",
+      name: "inventory",
+      validate: function(value) {
+        if (!isNaN(value)){
+          return true;
+        }
+        return false;
+      }
+    }
+  ]).then( ans => {
+    connection.query(`INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (?, ?, ?, ?)`, [ans.name, ans.category, ans.price, ans.inventory], (err, product) => {
+      if (err) throw err;
+      console.log(`\n----- Product Successfully Added! -----\n`);
+      console.log(`"${ans.name}" (${ans.category}) - $${ans.price} - Qty. ${ans.inventory}\n`);
+      menu();
+    })
+  })
 };
