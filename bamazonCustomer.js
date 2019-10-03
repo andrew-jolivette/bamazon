@@ -47,13 +47,13 @@ const menu = function() {
 const showProducts = function() {
   connection.query(`SELECT * FROM products ORDER BY item_id`, (err, products) => {
     if (err) throw err;
-    console.log('******************** - P R O D U C T S - *********************')
+    console.log('\n******************** - P R O D U C T S - *********************\n')
     for(let i = 0; i < products.length; i++){
       console.log(`ID: ${products[i].item_id} - "${products[i].product_name}" (${products[i].department_name}) -- $${products[i].price} -- Qty: ${products[i].stock_quantity}`)
     }
     console.log(`${products.length} items found.`)
-    console.log('**************************************************************')
-    menu();``
+    console.log('\n**************************************************************\n')
+    menu();
   })
 }
 
