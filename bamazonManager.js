@@ -60,13 +60,68 @@ const showProducts = () => {
 };
 
 const viewLowInv = () => {
-  console.log("View Low Items Here!")
-  menu();
+  connection.query(`SELECT * FROM products WHERE stock_quantity <= 5`, (err, stock) => {
+    if (err) throw err;
+    if (stock.length === 0) {
+      console.log("\n----- NO LOW INVENTORY! -----\n")
+    } else {
+      console.log('\n********* LOW INVENTORY: *********\n');
+      for (let i = 0; i < stock.length; i++){
+        const item = stock[i];
+        console.log(`ID: ${item.item_id} - "${item.product_name}" - Qty: ${item.stock_quantity}`);
+      }
+      console.log('\n**********************************\n');
+    }
+    menu();
+  })
 };
+
 const addInv = () => {
-  console.log("Add Inventory Here!")
-  menu();
+  connection.query(`SELECT * FROM products`, (err, products) => {
+    if (err) throw err;
+    console.log('\n************ INVENTORY: **********\n');
+    for (let i = 0; i < products.length; i++){
+      const item = products[i];
+      console.log(`ID: ${item.item_id} - "${item.product_name}" - Qty: ${item.stock_quantity}`);
+    }
+    console.log('\n**********************************\n');
+    inquirer.prompt([
+      {
+        message: "What product (ID #) would you like to add to?",
+        name: "product",
+        validate: function(value){
+          if (!isNaN(value)){
+            return true;
+          }
+          return false;
+        }
+      },
+      {
+        message: "How much would you like to add?",
+        name: "qty",
+        validate: function(value){
+          if(!isNaN(value)){
+            return true;
+          }
+          return false;
+        }
+      }
+    ]).then( update => {
+      const id = update.product;
+      connection.query(`SELECT * FROM products WHERE item_id = ?`, [id], (err, res) => {
+        if (err) throw err;
+        const qty = parseInt(res[0].stock_quantity) + parseInt(update.qty);
+        connection.query(`UPDATE products SET stock_quantity = ? WHERE item_id = ?`, [qty, id], (err, updated) => {
+          if (err) throw err;
+          const item = res[0];
+          console.log(`\n ***** ID: ${item.item_id} - "${item.product_name}" - UPDATED Qty: ${qty} ***** \n`)
+          menu();
+        })
+      })
+    })
+  })
 };
+
 const addProduct = () => {
   console.log("Add Products Here!")
   menu();

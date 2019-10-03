@@ -13,4 +13,8 @@ VALUES
   ("Coding King Hoodie", "Apparel", 50, 200),
   ("Black Socks", "Apparel", 15, 500);
   
-  SELECT * FROM products;
+  UPDATE products SET stock_quantity = 50 - 1 WHERE item_id = 1;
+  
+  select * from products;
+  
+  
