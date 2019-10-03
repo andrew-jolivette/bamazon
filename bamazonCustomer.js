@@ -27,11 +27,11 @@ const menu = function() {
     }
   ]).then ( res => {
     switch(res.choice) {
-      case "Show Products":
-        showProducts();
-        break;
       case "Purchase":
         purchaseItem();
+        break;
+      case "Show Products":
+        showProducts();
         break;
       case "Exit":
         console.log("Thank you for using BAM-azon!")
